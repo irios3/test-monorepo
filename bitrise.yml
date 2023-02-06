@@ -5,7 +5,7 @@ project_type: ios
 workflows:
   App2:
     description: |
-      The workflow the tests. The *retry_on_failure* test repetition mode is enabled.
+      The workflow  the tests. The *retry_on_failure* test repetition mode is enabled.
     steps:
     - activate-ssh-key@4: {}
     - git-clone@7: {}
@@ -44,20 +44,69 @@ workflows:
     - activate-ssh-key@4: {}
     - git-clone@7: {}
     - script@1.1:
-        title: Compress Derived Data
+        title: Decide which workflow should run
         is_always_run: true
         inputs:
         - content: |
-            echo "Just checking this is running General workflow"
+            echo "Decision making to run workflow"
+            echo "Commit on origin/main"
+            LATEST_COMMIT_ON_MAIN_ORIGIN=`git log -n 1 origin/main --pretty=format:"%H"`
+            echo $LATEST_COMMIT_ON_MAIN_ORIGIN
+
+            echo "Commit on this PR"
+            GIT_CLONE_COMMIT_HASH=`git log -n 1 --pretty=format:"%H"`
+            echo $GIT_CLONE_COMMIT_HASH
+
+            echo "Files changed with origin"
+            echo `git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_ORIGIN`
+            FILES_CHANGED_WITH_ORIGIN=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_ORIGIN`
+
+
+            echo "Commit on main branch"
+            LATEST_COMMIT_ON_MAIN_PR=`git log -n 2 main --pretty=format:"%H"`
+            echo $LATEST_COMMIT_ON_MAIN_PR
+
+
+            FILES_CHANGED=""
+
+
+            if [[ $LATEST_COMMIT_ON_MAIN_ORIGIN ==  $LATEST_COMMIT_ON_MAIN_PR ]]
+            then
+              echo "First commit"
+              FILES_CHANGED=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_ORIGIN
+              echo "$FILES_CHANGED"
+            elif [[ $LATEST_COMMIT_ON_MAIN_PR == $GIT_CLONE_COMMIT_HASH ]]
+            then
+              echo "merge made by the ort strategy"
+              FILES_CHANGED=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_ORIGIN
+              echo "$FILES_CHANGED"
+            else
+              echo "Changes between commits"
+              FILES_CHANGED=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_PR
+              echo "$FILES_CHANGED"
+            fi
+
+            echo "$FILES_CHANGED"
+            echo "Based on the files changed, run corresponding workflow"
+            STR=$FILES_CHANGED
+
+            SUB_APP1="TestApp1"
+            SUB_APP2="TestApp2"
+
+            if [[ "$STR" == *"$SUB_APP1"* ]] && [[ "$STR" == *"$SUB_APP2"* ]] ; then
+                echo "Both app changed: run WF1 and WF2"
+            elif [[ "$STR" == *"$SUB_APP1"* ]]; then
+                echo "TestApp1 changed: run WF1"
+            elif [[ "$STR" == *"$SUB_APP2"* ]]; then
+                echo "TestApp2 changed: run WF2"
+            else
+                echo "only Root changed: run Common"
+            fi
     - cache-pull@2: {}
     - cache-push@2: {}
     - deploy-to-bitrise-io@2: {}
 trigger_map:
-- push_branch: app2-*
-  workflow: App2
-- push_branch: app1-*
-  workflow: App1
-- push_branch: general-*
+- push_branch: main
   workflow: General
 - pull_request_source_branch: app1-*
   workflow: App1
