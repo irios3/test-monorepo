@@ -73,16 +73,16 @@ workflows:
             if [[ $LATEST_COMMIT_ON_MAIN_ORIGIN ==  $LATEST_COMMIT_ON_MAIN_PR ]]
             then
               echo "First commit"
-              FILES_CHANGED=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_ORIGIN
+              FILES_CHANGED=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_ORIGIN`
               echo "$FILES_CHANGED"
             elif [[ $LATEST_COMMIT_ON_MAIN_PR == $GIT_CLONE_COMMIT_HASH ]]
             then
               echo "merge made by the ort strategy"
-              FILES_CHANGED=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_ORIGIN
+              FILES_CHANGED=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_ORIGIN`
               echo "$FILES_CHANGED"
             else
               echo "Changes between commits"
-              FILES_CHANGED=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_PR
+              FILES_CHANGED=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_PR`
               echo "$FILES_CHANGED"
             fi
 
