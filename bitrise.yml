@@ -5,7 +5,7 @@ project_type: ios
 workflows:
   App2:
     description: |
-      The workflow  the tests. The *retry_on_failure* test repetition mode is enabled.
+      The workflow the tests. The *retry_on_failure* test repetition mode is enabled.
     steps:
     - activate-ssh-key@4: {}
     - git-clone@7: {}
