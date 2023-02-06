@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  TestAp
 //
-//  Created by isabel rios on /1/23.
+//  Created by isabel on /1/23.
 //
 
 import SwiftUI
