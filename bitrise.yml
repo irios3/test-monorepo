@@ -79,7 +79,7 @@ workflows:
                 curl -X 'POST' \
                 'https://api.bitrise.io/v0.1/apps/afc64c84ebbc2f3c/builds' \
                 -H 'accept: application/json' \
-                -H "authorization: ${TOKEN}" \
+                -H "authorization: Bearer ${TOKEN}" \
                 -H 'Content-Type: application/json' \
                 -d '{
                 "build_params": {
