@@ -76,6 +76,20 @@ workflows:
                 echo "TestApp2 changed: run WF2"
             else
                 echo "only Root changed: run Common"
+                curl -X 'POST' \
+                'https://api.bitrise.io/v0.1/apps/afc64c84ebbc2f3c/builds' \
+                -H 'accept: application/json' \
+                -H 'Authorization: $TOKEN' \
+                -H 'Content-Type: application/json' \
+                -d '{
+                "build_params": {
+                  "branch": "main",
+                  "workflow_id": "APP1"
+                },
+                "hook_info": {
+                  "type": "bitrise"
+                }
+              }'
             fi
     - cache-pull@2: {}
     - cache-push@2: {}
