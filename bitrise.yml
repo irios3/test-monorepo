@@ -44,7 +44,9 @@ workflows:
       The workflow to run when code not related to app has changed in PR and / or main
     steps:
     - activate-ssh-key@4: {}
-    - git-clone@7: {}
+    - git-clone@7:
+      inputs:
+      - clone_depth: 1
     - script@1.1:
         title: Decide which workflow should run
         is_always_run: true
