@@ -10,14 +10,11 @@ workflows:
     - activate-ssh-key@4: {}
     - git-clone@7: {}
     - cache-pull@2: {}
-    - recreate-user-schemes@1:
+    - script@1.1:
+        title: Run Worflow for app2
         inputs:
-        - project_path: "$BITRISE_PROJECT_PATH"
-    - xcode-test@4:
-        inputs:
-        - project_path: "$BITRISE_PROJECT_PATH"
-        - scheme: "$BITRISE_SCHEME"
-        - test_repetition_mode: retry_on_failure
+        - content: |
+            echo "Running script for APP2"
     - cache-push@2: {}
     - deploy-to-bitrise-io@2: {}
   App1:
@@ -29,14 +26,11 @@ workflows:
         inputs:
         - clone_depth: 1
     - cache-pull@2: {}
-    - recreate-user-schemes@1:
+    - script@1.1:
+        title: Run Worflow for app1
         inputs:
-        - project_path: "$BITRISE_PROJECT_PATH"
-    - xcode-test@4:
-        inputs:
-        - project_path: "$BITRISE_PROJECT_PATH"
-        - scheme: "$BITRISE_SCHEME"
-        - test_repetition_mode: retry_on_failure
+        - content: |
+            echo "Running script for APP1"
     - cache-push@2: {}
     - deploy-to-bitrise-io@2: {}
   General:
