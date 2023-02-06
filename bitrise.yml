@@ -65,7 +65,7 @@ workflows:
 
 
             echo "Commit on main branch"
-            LATEST_COMMIT_ON_MAIN_PR=`git log -n 2 origin/main --pretty=format:"%H"`
+            LATEST_COMMIT_ON_MAIN_PR=`git log -n 2 origin/main --pretty=format:"%H" | tail -n 1`
             echo $LATEST_COMMIT_ON_MAIN_PR
 
 
