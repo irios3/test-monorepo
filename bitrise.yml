@@ -49,7 +49,7 @@ workflows:
         - clone_depth: "1"
     - script@1.1:
         title: Decide which workflow should run
-        is_always_run: true
+        run_if: not .IsPR
         inputs:
         - content: |
             #ADD RUN IF PUSH NOT PR
@@ -59,14 +59,6 @@ workflows:
             LATEST_COMMIT_ON_MAIN_ORIGIN=`git log -n 1 origin/main --pretty=format:"%H"`
             echo $LATEST_COMMIT_ON_MAIN_ORIGIN
 
-            #echo "Commit on this PR"
-            #GIT_CLONE_COMMIT_HASH=`git log -n 1 --pretty=format:"%H"`
-            #echo $GIT_CLONE_COMMIT_HASH
-
-            echo "Files changed with origin"
-            echo `git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_ORIGIN`
-            FILES_CHANGED_WITH_ORIGIN=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_ORIGIN`
-
 
             echo "Commit on main branch"
             LATEST_COMMIT_ON_MAIN_PR=`git log -n 2 origin/main --pretty=format:"%H" | tail -n 1`
@@ -74,17 +66,6 @@ workflows:
 
 
             FILES_CHANGED=`git diff --name-only $LATEST_COMMIT_ON_MAIN_PR $LATEST_COMMIT_ON_MAIN_ORIGIN`
-
-            #if [[ $LATEST_COMMIT_ON_MAIN_ORIGIN ==  $LATEST_COMMIT_ON_MAIN_PR ]]
-            #then
-            #  echo "First commit"
-            #  FILES_CHANGED=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_ORIGIN`
-            #  echo "$FILES_CHANGED"
-            #else [[ $LATEST_COMMIT_ON_MAIN_PR == $GIT_CLONE_COMMIT_HASH ]]
-            #  echo "merge made by the ort strategy"
-            #  FILES_CHANGED=`git diff --name-only $GIT_CLONE_COMMIT_HASH $LATEST_COMMIT_ON_MAIN_ORIGIN`
-            #  echo "$FILES_CHANGED"
-            #fi
 
             echo "$FILES_CHANGED"
             echo "Based on the files changed, run corresponding workflow"
