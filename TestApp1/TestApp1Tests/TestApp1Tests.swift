@@ -1,7 +1,7 @@
 //
 //  TestApp1Tests
 //
-//  Created by isabel
+//  Created by
 //
 
 import XCTest
