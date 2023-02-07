@@ -5,7 +5,7 @@ project_type: ios
 workflows:
   App2:
     description: |
-      The workflow  the tests. The *retry_on_failure* test repetition mode is enabled.
+      The workflow the tests
     steps:
     - activate-ssh-key@4: {}
     - git-clone@7: {}
@@ -46,18 +46,14 @@ workflows:
         run_if: not .IsPR
         inputs:
         - content: |
-            #ADD RUN IF PUSH NOT PR
-
             echo "Decision making to run workflow"
             echo "Commit on origin/main"
             LATEST_COMMIT_ON_MAIN_ORIGIN=`git log -n 1 origin/main --pretty=format:"%H"`
             echo $LATEST_COMMIT_ON_MAIN_ORIGIN
 
-
             echo "Commit on main branch"
             LATEST_COMMIT_ON_MAIN_PR=`git log -n 2 origin/main --pretty=format:"%H" | tail -n 1`
             echo $LATEST_COMMIT_ON_MAIN_PR
-
 
             FILES_CHANGED=`git diff --name-only $LATEST_COMMIT_ON_MAIN_PR $LATEST_COMMIT_ON_MAIN_ORIGIN`
 
@@ -68,28 +64,82 @@ workflows:
             SUB_APP1="TestApp1"
             SUB_APP2="TestApp2"
 
+            buildApp1(){
+            curl -X POST 'https://api.bitrise.io/v0.1/apps/afc64c84ebbc2f3c/builds' \
+            -H 'accept: application/json' \
+            -H "authorization: $TOKEN" \
+            -H 'Content-Type: application/json' \
+            -d '{
+            "build_params": {
+            "branch": "main",
+            "workflow_id": "App1"
+            },
+            "hook_info": {
+            "type": "bitrise"
+            }
+            }'
+            }
+
+            buildApp2(){
+            curl -X POST 'https://api.bitrise.io/v0.1/apps/eccdc15b339b352c/builds' \
+            -H 'accept: application/json' \
+            -H "authorization: $TOKEN" \
+            -H 'Content-Type: application/json' \
+            -d '{
+            "build_params": {
+            "branch": "main",
+            "workflow_id": "App2"
+            },
+            "hook_info": {
+            "type": "bitrise"
+            }
+            }'
+            }
+
+            runCommonBuildApp2(){
+            curl -X POST 'https://api.bitrise.io/v0.1/apps/eccdc15b339b352c/builds' \
+            -H 'accept: application/json' \
+            -H "authorization: $TOKEN" \
+            -H 'Content-Type: application/json' \
+            -d '{
+            "build_params": {
+            "branch": "main",
+            "workflow_id": "General"
+            },
+            "hook_info": {
+            "type": "bitrise"
+            }
+            }'
+            }
+
+            runCommonBuildApp1(){
+            curl -X POST 'https://api.bitrise.io/v0.1/apps/afc64c84ebbc2f3c/builds' \
+            -H 'accept: application/json' \
+            -H "authorization: $TOKEN" \
+            -H 'Content-Type: application/json' \
+            -d '{
+            "build_params": {
+            "branch": "main",
+            "workflow_id": "General"
+            },
+            "hook_info": {
+            "type": "bitrise"
+            }
+            }'
+            }
+
             if [[ "$STR" == *"$SUB_APP1"* ]] && [[ "$STR" == *"$SUB_APP2"* ]] ; then
-                echo "Both app changed: run WF1 and WF2"
+                echo "Both app changed run WF1 and WF2"
             elif [[ "$STR" == *"$SUB_APP1"* ]]; then
-                echo "TestApp1 changed: run WF1"
+                echo "TestApp1 changed run WF1"
+                buildApp1
             elif [[ "$STR" == *"$SUB_APP2"* ]]; then
-                echo "TestApp2 changed: run WF2"
+                echo "TestApp2 changed run WF2"
+                buildApp2
             else
-                echo "only Root changed: run Common"
-                curl -X 'POST' \
-                'https://api.bitrise.io/v0.1/apps/afc64c84ebbc2f3c/builds' \
-                -H 'accept: application/json' \
-                -H "Authorization: Bearer ${TOKEN}" \
-                -H 'Content-Type: application/json' \
-                -d '{
-                "build_params": {
-                  "branch": "main",
-                  "workflow_id": "App1"
-                },
-                "hook_info": {
-                  "type": "bitrise"
-                }
-              }'
+                echo "only Root changed run Common"
+                runCommonBuildApp2
+                runCommonBuildApp1           
             fi
     - cache-pull@2: {}
     - cache-push@2: {}
