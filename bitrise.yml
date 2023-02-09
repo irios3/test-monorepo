@@ -33,7 +33,20 @@ workflows:
             echo "Running script for APP1"
     - cache-push@2: {}
     - deploy-to-bitrise-io@2: {}
-  General:
+  RootDir:
+    description: |
+      This workflow only runs when files in root dir are changed
+    steps:
+    - activate-ssh-key@4: {}
+    - git-clone@7:
+        inputs:
+        - clone_depth: "10"
+    - script@1.1:
+        title: Decide which workflow should run
+        inputs:
+        - content: |
+            echo "Running RootDir workflow"
+  WorkflowDecisionMaking:
     description: |
       The workflow to run when code not related to app has changed in PR and / or main
     steps:
@@ -104,7 +117,7 @@ workflows:
             -d '{
             "build_params": {
             "branch": "main",
-            "workflow_id": "General"
+            "workflow_id": "RootDir"
             },
             "hook_info": {
             "type": "bitrise"
@@ -120,7 +133,7 @@ workflows:
             -d '{
             "build_params": {
             "branch": "main",
-            "workflow_id": "General"
+            "workflow_id": "RootDir"
             },
             "hook_info": {
             "type": "bitrise"
@@ -130,6 +143,8 @@ workflows:
 
             if [[ "$STR" == *"$SUB_APP1"* ]] && [[ "$STR" == *"$SUB_APP2"* ]] ; then
                 echo "Both app changed run WF1 and WF2"
+                buildApp1
+                buildApp2
             elif [[ "$STR" == *"$SUB_APP1"* ]]; then
                 echo "TestApp1 changed run WF1"
                 buildApp1
@@ -146,13 +161,13 @@ workflows:
     - deploy-to-bitrise-io@2: {}
 trigger_map:
 - push_branch: main
-  workflow: General
+  workflow: WorkflowDecisionMaking
 - pull_request_source_branch: app1-*
   workflow: App1
 - pull_request_source_branch: app2-*
   workflow: App2
-- pull_request_source_branch: general-*
-  workflow: General
+- pull_request_source_branch: rootDir-*
+  workflow: RootDir
 meta:
   bitrise.io:
     stack: osx-xcode-14.1.x
