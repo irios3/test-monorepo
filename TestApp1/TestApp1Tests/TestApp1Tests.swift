@@ -1,7 +1,7 @@
 //
 //  TestApp1Tests
 //
-//  Created by
+//  Created
 //
 
 import XCTest
