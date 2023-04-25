@@ -33,7 +33,10 @@ workflows:
         title: Run Worflow for app1
         inputs:
         - content: |
-            echo "Running script for APP1"
+            echo "Running script for APP1
+    - swiftlint@0:
+        inputs:
+        - linting_path: $BITRISE_SOURCE_DIR
     - cache-push@2: {}
     - deploy-to-bitrise-io@2: {}
   RootDir:
