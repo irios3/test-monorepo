@@ -176,4 +176,4 @@ trigger_map:
   workflow: RootDir
 meta:
   bitrise.io:
-    stack: osx-xcode-14.1.x
+    stack: osx-xcode-14.1.x-ventura
