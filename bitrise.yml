@@ -21,7 +21,7 @@ workflows:
             set -e
             echo "$SWIFTLINT_REPORT"
 
-            if [ -z "$SWIFTLINT_REPORT" ] ;then
+            if [ ! -z "$SWIFTLINT_REPORT" ] ;then
             # The file is not-empty.
                 exit 1
             fi
