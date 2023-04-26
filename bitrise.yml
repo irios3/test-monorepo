@@ -18,11 +18,10 @@ workflows:
         inputs:
         - content: |
             #!/bin/bash -e
-
-            if [ -s $SWIFTLINT_REPORT ]; then
+            set -e
+            if [ -z "$SWIFTLINT_REPORT" ] ;then
             # The file is not-empty.
-            
-            exit 1
+                exit 1
             fi
     - swiftlint@0:
         inputs:
