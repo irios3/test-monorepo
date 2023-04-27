@@ -2,7 +2,48 @@
 format_version: '11'
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 project_type: ios
+
+pipelines:
+  test_pipeline:
+    stages:
+    - stage_1: {}
+    - stage_2: {}
+
+stages:
+  stage_1:
+    workflows:
+    - DecisionMaking: {}
+  stage_2:
+    workflows:
+    - testVble: {}
+
 workflows:
+  DecisionMaking:
+    description: |
+      Wworkflow to test using env vbles across stages
+    steps:
+    - activate-ssh-key@4: {}
+    - git-clone@7: {}
+    - cache-pull@2: {}
+    - swiftlint-extended@1:
+        inputs:
+        - linting_path: $BITRISE_SOURCE_DIR
+     - share-pipeline-variable@1:
+        inputs:
+        - variables: RUN_UI_TESTS=true
+  testVble:
+    description:
+      workflow to test
+    steps:
+    - git-clone@7: {}
+    - cache-pull@2: {}
+    - script@1.1:
+        title: check it warnings
+        inputs:
+        - content: |
+            #!/bin/bash -e
+            set -e
+            echo $RUN_UI_TESTS
   App2:
     description: |
       The workflow the tests
@@ -23,6 +64,7 @@ workflows:
 
             if [ ! -z "$SWIFTLINT_REPORT" ] ;then
             # The file is not-empty.
+                echo "Failing build since there are swiftlint errors"
                 exit 1
             fi
     - swiftlint@0:
@@ -189,6 +231,8 @@ trigger_map:
   workflow: App2
 - pull_request_source_branch: rootDir-*
   workflow: RootDir
+- pull_request_source_branch: *
+  pipeline: test_pipeline
 meta:
   bitrise.io:
     stack: osx-xcode-14.1.x-ventura
