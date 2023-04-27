@@ -231,7 +231,7 @@ trigger_map:
   workflow: App2
 - pull_request_source_branch: rootDir-*
   workflow: RootDir
-- pull_request_source_branch: *
+- pull_request_source_branch: main
   pipeline: test_pipeline
 meta:
   bitrise.io:
