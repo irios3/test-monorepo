@@ -43,7 +43,7 @@ workflows:
             #!/bin/bash -e
             Should_Run=true
 
-            latest_commint_main=git log -n 1 main
+            latest_commint_main=`git log -n 1 main`
             latest_commit_PR=$GIT_CLONE_COMMIT_HASH
 
             echo "$latest_commint_main"
@@ -51,7 +51,7 @@ workflows:
 
             echo `git diff --name-only $latest_commit_PR $latest_commint_main`
 
-            Should_Run=false
+            Should_Run=yes
 
             envman add --key DEC_MAK --value "$Should_Run"
             echo "custom"
@@ -79,7 +79,7 @@ workflows:
             echo "$DEC_MAK"
     - script@1.1:
         title: run conditionally
-        run_if: '{{getenv "DEC_MAK" | eq false}}'
+        run_if: '{{getenv "DEC_MAK" | eq "yes"}}'
         inputs:
         -conten: |
             echo "Hello"
