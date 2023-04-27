@@ -43,15 +43,15 @@ workflows:
             #!/bin/bash -e
             Should_Run=true
 
-            latest_commint_main=`git log -n 1 main`
             latest_commit_PR=$GIT_CLONE_COMMIT_HASH
-
-            echo "$latest_commint_main"
             echo "$latest_commint_PR"
+            latest_commint_main=`git log -n 1 origin/main`
+            echo "$latest_commint_main"
+            
 
             echo `git diff --name-only $latest_commit_PR $latest_commint_main`
 
-            Should_Run=yes
+            Should_Run=no
 
             envman add --key DEC_MAK --value "$Should_Run"
             echo "custom"
