@@ -32,7 +32,7 @@ workflows:
         inputs:
         - variables: RUN_UI_TESTS=true
   testVble:
-    description:
+    description: |
       workflow to test
     steps:
     - git-clone@7: {}
@@ -44,6 +44,7 @@ workflows:
             #!/bin/bash -e
             set -e
             echo $RUN_UI_TESTS
+
   App2:
     description: |
       The workflow the tests
