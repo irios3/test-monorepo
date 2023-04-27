@@ -28,6 +28,7 @@ workflows:
     - swiftlint-extended@1:
         inputs:
         - linting_path: $BITRISE_SOURCE_DIR
+    
     - share-pipeline-variable@1:
         inputs:
         - variables: RUN_UI_TESTS=true
@@ -40,8 +41,8 @@ workflows:
             echo "Variable"
             echo $RUN_UI_TESTS
             RUN_UI_TESTS=false
-            RUN_UI_TESTS=False
-            RUN_UI_TESTS='false'
+
+            echo "$RUN_UI_TESTS"
   testVble:
     description: |
       workflow to test
