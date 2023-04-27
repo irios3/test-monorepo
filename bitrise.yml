@@ -45,7 +45,7 @@ workflows:
 
             latest_commit_PR=$GIT_CLONE_COMMIT_HASH
             echo "$latest_commint_PR"
-            latest_commint_main=`git log -n 1 main --pretty=format:"%H"`
+            latest_commint_main=`git log -n 1 origin/main --pretty=format:"%H"`
             echo "$latest_commint_main"
             
 
