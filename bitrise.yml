@@ -36,26 +36,28 @@ workflows:
             set -e
             Should_Run=true
             envman add --key DEC_MAK --value "$Should_Run"
-    - share-pipeline-variable@1:
-        inputs:
-        - variables: DEC_MAK
     - script@1.1:
-        title: check it warnings
+        title: print variables
         inputs:
         - content: |
             #!/bin/bash -e
             set -e
+            echo "print something"
             Should_Run=false
 
             echo "Variable"
             echo $RUN_UI_TESTS
             RUN_UI_TESTS=false
             echo "$RUN_UI_TESTS"
+            envman add --key DEC_MAK --value "$Should_Run"
             echo "custom"
             echo "$DEC_MAK"
             echo "$Should_Run"
             echo "change DEC_MAK"
             echo "$DEC_MAK"
+    - share-pipeline-variable@1:
+        inputs:
+        - variables: DEC_MAK
   testVble:
     description: |
       workflow to test
