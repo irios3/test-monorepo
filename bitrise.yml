@@ -28,7 +28,7 @@ workflows:
     - swiftlint-extended@1:
         inputs:
         - linting_path: $BITRISE_SOURCE_DIR
-     - share-pipeline-variable@1:
+    - share-pipeline-variable@1:
         inputs:
         - variables: RUN_UI_TESTS=true
   testVble:
