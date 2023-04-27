@@ -28,33 +28,36 @@ workflows:
     - swiftlint-extended@1:
         inputs:
         - linting_path: $BITRISE_SOURCE_DIR
-    - script@1.1:
-        title: check it warnings
-        inputs:
-        - content: |
-            #!/bin/bash -e
-            set -e
-            Should_Run=true
-            envman add --key DEC_MAK --value "$Should_Run"
+    #- script@1.1:
+    #    title: add variable
+    #    inputs:
+    #    - content: |
+    #        #!/bin/bash -e
+    #        set -e
+    #        Should_Run=true
+    #        envman add --key DEC_MAK --value "$Should_Run"
     - script@1.1:
         title: print variables
         inputs:
         - content: |
             #!/bin/bash -e
-            set -e
-            echo "print something"
+            Should_Run=true
+
+            latest_commint_main=git log -n 1 main
+            latest_commit_PR=$GIT_CLONE_COMMIT_HASH
+
+            echo "$latest_commint_main"
+            echo "$latest_commint_PR"
+
+            echo `git diff --name-only $latest_commit_PR $latest_commint_main`
+
             Should_Run=false
 
-            echo "Variable"
-            echo $RUN_UI_TESTS
-            RUN_UI_TESTS=false
-            echo "$RUN_UI_TESTS"
             envman add --key DEC_MAK --value "$Should_Run"
             echo "custom"
             echo "$DEC_MAK"
             echo "$Should_Run"
-            echo "change DEC_MAK"
-            echo "$DEC_MAK"
+            
     - share-pipeline-variable@1:
         inputs:
         - variables: DEC_MAK
@@ -74,6 +77,12 @@ workflows:
             echo $RUN_UI_TESTS
             echo "custom"
             echo "$DEC_MAK"
+    - script@1.1:
+        title: run conditionally
+        run_if: '{{getenv "DEC_MAK" | eq false}}'
+        inputs:
+        -conten: |
+            echo "Hello"
   App2:
     description: |
       The workflow the tests
